@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BI Interativo - Carta de Cobrança</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 text-slate-800">
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <header class="mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-slate-900 flex items-center gap-3">
+                        <i class="fas fa-chart-pie text-sky-600"></i>
+                        <span>Business intelligence Cobranças</span>
+                    </h1>
+                    <p class="text-slate-500 mt-1">Análise interativa do desempenho das cartas de cobrança.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row items-start sm:items-end gap-3 w-full md:w-auto">
+                    <div class="w-full md:w-80">
+                        <label for="carta-cobranca-select" class="block text-sm font-medium text-slate-700 mb-1">Selecionar Carta de Cobrança:</label>
+                        <div class="custom-select-wrapper">
+                             <select id="carta-cobranca-select" class="w-full p-3 bg-white border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition">
+                                <option value="cc1">2025/06 - IPTU/ISS/TFF</option>
+                                <option value="cc2">2025/05 - TFF</option>
+                            </select>
+                            <div class="icon">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="info-bar" class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-center bg-white p-4 rounded-lg shadow-sm border border-slate-200">
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 gap-8">
+            
+            <section aria-labelledby="visao-geral-title">
+                <div class="flex items-center gap-3 mb-4">
+                     <h2 id="visao-geral-title" class="text-2xl font-semibold text-slate-800">Visão Geral</h2>
+                     <hr class="flex-grow border-t border-slate-200">
+                </div>
+                <div id="kpi-row-1" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6"></div>
+                <div id="kpi-row-2" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+            </section>
+            
+            <section aria-labelledby="detalhes-contribuintes-title" class="pdf-page-break">
+                 <div class="flex items-center gap-3 mt-8 mb-4">
+                     <h2 id="detalhes-contribuintes-title" class="text-2xl font-semibold text-slate-800">Detalhes por Contribuinte</h2>
+                     <hr class="flex-grow border-t border-slate-200">
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+                    <article class="lg:col-span-6 bg-white p-6 rounded-lg shadow-md border border-slate-200 transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                        <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2 mb-4"><i class="fa-solid fa-arrow-up-right-dots text-sky-600"></i>Top 10 Maiores Valores</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left text-slate-500">
+                                <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 rounded-l-lg">
+                                            <div class="table-header-icon"><i class="fa-solid fa-user text-slate-500"></i>Contribuinte</div>
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-right">
+                                            <div class="table-header-icon justify-end"><i class="fa-solid fa-dollar-sign text-slate-500"></i>Total</div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="top-valores-table"></tbody>
+                                <tfoot id="top-valores-total"></tfoot>
+                            </table>
+                        </div>
+                    </article>
+                    <article class="lg:col-span-6 bg-white p-6 rounded-lg shadow-md border border-slate-200 transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                        <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2 mb-4"><i class="fa-solid fa-arrow-trend-down text-sky-600"></i>Top 10 Menores Valores</h3>
+                         <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left text-slate-500">
+                                <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 rounded-l-lg">
+                                            <div class="table-header-icon"><i class="fa-solid fa-user text-slate-500"></i>Contribuinte</div>
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-right">
+                                            <div class="table-header-icon justify-end"><i class="fa-solid fa-dollar-sign text-slate-500"></i>Total</div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="menores-valores-table"></tbody>
+                                <tfoot id="menores-valores-total"></tfoot>
+                            </table>
+                        </div>
+                    </article>
+                    <article id="agelist-container" class="lg:col-span-12 bg-white p-6 rounded-lg shadow-md border border-slate-200 transition-all duration-300 ease-in-out hover:shadow-xl">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-list-check text-sky-600"></i>
+                                Agelist de Cobrança por Faixa de Valor
+                            </h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left text-slate-500">
+                                <thead class="text-xs text-slate-700 uppercase bg-slate-100">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 rounded-l-lg">
+                                            <div class="table-header-icon"><i class="fa-solid fa-arrows-left-right text-slate-500"></i>Faixa de Valor (R$)</div>
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-right">
+                                            <div class="table-header-icon justify-end"><i class="fa-solid fa-dollar-sign text-slate-500"></i>Valor Total (R$)</div>
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-right rounded-r-lg">
+                                            <div class="table-header-icon justify-end"><i class="fa-solid fa-sort-numeric-up-alt text-slate-500"></i>Quantidade</div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="agelist-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+                </div>
+            </section>
+            
+            <section aria-labelledby="arrecadacao-title" class="pdf-page-break">
+                <div class="flex items-center gap-3 mt-8 mb-4">
+                     <h2 id="arrecadacao-title" class="text-2xl font-semibold text-slate-800">Desempenho da Arrecadação</h2>
+                     <hr class="flex-grow border-t border-slate-200">
+                </div>
+                 <div id="kpi-container-arrecadacao" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+                    </div>
+                <div id="charts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 lg:gap-8">
+                    
+                    <article class="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-200 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-chart-line text-sky-600"></i><span>Valor Recebido / Mês</span></h3>
+                            <div class="flex items-center gap-2">
+                                <button class="download-chart-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="line" title="Baixar PNG"><i class="fa-solid fa-download fa-fw"></i><span>Baixar</span></button>
+                                <button class="open-chart-modal-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="line" data-filters-available="false" title="Ver detalhes"><i class="fa-solid fa-expand fa-fw"></i><span>Detalhes</span></button>
+                            </div>
+                        </div>
+                        <div class="chart-container flex-grow"><canvas id="recebimentoValorMesChart" role="img"></canvas></div>
+                    </article>
+
+                    <article class="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-200 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-chart-bar text-sky-600"></i><span>Qtd Recebida / Mês</span></h3>
+                            <div class="flex items-center gap-2">
+                                <button class="download-chart-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="bar" title="Baixar PNG"><i class="fa-solid fa-download fa-fw"></i><span>Baixar</span></button>
+                                <button class="open-chart-modal-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="bar" data-filters-available="false" title="Ver detalhes"><i class="fa-solid fa-expand fa-fw"></i><span>Detalhes</span></button>
+                            </div>
+                        </div>
+                        <div class="chart-container flex-grow"><canvas id="recebimentoQtdMesChart" role="img"></canvas></div>
+                    </article>
+
+                    <article class="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-200 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                         <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-chart-pie text-sky-600"></i><span>Valor por Tributo</span></h3>
+                            <div class="flex items-center gap-2">
+                                <button class="download-chart-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="doughnut" title="Baixar PNG"><i class="fa-solid fa-download fa-fw"></i><span>Baixar</span></button>
+                                <button class="open-chart-modal-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="doughnut" data-filters-available="false" title="Ver detalhes"><i class="fa-solid fa-expand fa-fw"></i><span>Detalhes</span></button>
+                            </div>
+                        </div>
+                        <div class="chart-container flex-grow"><canvas id="recebimentoValorTributoChart" role="img"></canvas></div>
+                    </article>
+
+                     <article class="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-200 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-chart-column text-sky-600"></i><span>Qtd por Tributo</span></h3>
+                            <div class="flex items-center gap-2">
+                                <button class="download-chart-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="qtdTributo" title="Baixar PNG"><i class="fa-solid fa-download fa-fw"></i><span>Baixar</span></button>
+                                <button class="open-chart-modal-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="qtdTributo" data-filters-available="false" title="Ver detalhes"><i class="fa-solid fa-expand fa-fw"></i><span>Detalhes</span></button>
+                            </div>
+                        </div>
+                        <div class="chart-container flex-grow"><canvas id="recebimentoQtdTributoChart" role="img"></canvas></div>
+                    </article>
+
+                    <article class="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-200 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-chart-bar text-red-500"></i><span>Valor Cancelado / Mês</span></h3>
+                            <div class="flex items-center gap-2">
+                                <button class="download-chart-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="cancelamentoValorMes" title="Baixar PNG"><i class="fa-solid fa-download fa-fw"></i><span>Baixar</span></button>
+                                <button class="open-chart-modal-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="cancelamentoValorMes" data-filters-available="false" title="Ver detalhes"><i class="fa-solid fa-expand fa-fw"></i><span>Detalhes</span></button>
+                            </div>
+                        </div>
+                        <div class="chart-container flex-grow"><canvas id="cancelamentoValorMesChart" role="img"></canvas></div>
+                    </article>
+
+                    <article class="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-200 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-chart-bar text-red-500"></i><span>Qtd Cancelada / Mês</span></h3>
+                             <div class="flex items-center gap-2">
+                                 <button class="download-chart-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="cancelamentoQtdMes" title="Baixar PNG"><i class="fa-solid fa-download fa-fw"></i><span>Baixar</span></button>
+                                <button class="open-chart-modal-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="cancelamentoQtdMes" data-filters-available="false" title="Ver detalhes"><i class="fa-solid fa-expand fa-fw"></i><span>Detalhes</span></button>
+                            </div>
+                        </div>
+                        <div class="chart-container flex-grow"><canvas id="cancelamentoQtdMesChart" role="img"></canvas></div>
+                    </article>
+
+                    <article class="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-200 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-right-left text-sky-600"></i><span>Emitido vs. Arrecadado</span></h3>
+                             <div class="flex items-center gap-2">
+                                <button class="download-chart-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="emitidoArrecadadoMes" title="Baixar PNG"><i class="fa-solid fa-download fa-fw"></i><span>Baixar</span></button>
+                                <button class="open-chart-modal-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="emitidoArrecadadoMes" data-filters-available="false" title="Ver detalhes"><i class="fa-solid fa-expand fa-fw"></i><span>Detalhes</span></button>
+                            </div>
+                        </div>
+                        <div class="chart-container flex-grow"><canvas id="emitidoArrecadadoMesChart" role="img"></canvas></div>
+                    </article>
+
+                    <article class="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-200 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-chart-radar text-sky-600"></i><span>Performance Comparativa</span></h3>
+                            <div class="flex items-center gap-2">
+                                <button class="download-chart-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="radar" title="Baixar PNG"><i class="fa-solid fa-download fa-fw"></i><span>Baixar</span></button>
+                                <button class="open-chart-modal-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="radar" data-filters-available="true" title="Ver detalhes"><i class="fa-solid fa-expand fa-fw"></i><span>Detalhes</span></button>
+                            </div>
+                        </div>
+                        <div class="chart-container flex-grow"><canvas id="radarChart" role="img"></canvas></div>
+                    </article>
+
+                    <article class="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-200 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-compass-drafting text-sky-600"></i><span>Partic. por Faixa (%)</span></h3>
+                            <div class="flex items-center gap-2">
+                                <button class="download-chart-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="polar" title="Baixar PNG"><i class="fa-solid fa-download fa-fw"></i><span>Baixar</span></button>
+                                <button class="open-chart-modal-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="polar" data-filters-available="false" title="Ver detalhes"><i class="fa-solid fa-expand fa-fw"></i><span>Detalhes</span></button>
+                            </div>
+                        </div>
+                        <div class="chart-container flex-grow"><canvas id="polarAreaChart" role="img"></canvas></div>
+                    </article>
+
+                    <article class="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-200 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-circle-nodes text-sky-600"></i><span>Valor vs. Qtd</span></h3>
+                             <div class="flex items-center gap-2">
+                                 <button class="download-chart-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="bubble" title="Baixar PNG"><i class="fa-solid fa-download fa-fw"></i><span>Baixar</span></button>
+                                <button class="open-chart-modal-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="bubble" data-filters-available="false" title="Ver detalhes"><i class="fa-solid fa-expand fa-fw"></i><span>Detalhes</span></button>
+                            </div>
+                        </div>
+                        <div class="chart-container flex-grow"><canvas id="bubbleChart" role="img"></canvas></div>
+                    </article>
+
+                     <article class="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-200 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-users text-sky-600"></i><span>Receita por Perfil</span></h3>
+                            <div class="flex items-center gap-2">
+                                <button class="download-chart-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="perfilContribuinte" title="Baixar PNG"><i class="fa-solid fa-download fa-fw"></i><span>Baixar</span></button>
+                                <button class="open-chart-modal-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="perfilContribuinte" data-filters-available="true" title="Ver detalhes"><i class="fa-solid fa-expand fa-fw"></i><span>Detalhes</span></button>
+                            </div>
+                        </div>
+                        <div class="chart-container flex-grow"><canvas id="perfilContribuinteChart" role="img"></canvas></div>
+                    </article>
+
+                    <article class="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-slate-200 flex flex-col transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-cash-register text-sky-600"></i><span>Canal de Pagamento</span></h3>
+                             <div class="flex items-center gap-2">
+                                 <button class="download-chart-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="pagamentoCanal" title="Baixar PNG"><i class="fa-solid fa-download fa-fw"></i><span>Baixar</span></button>
+                                <button class="open-chart-modal-btn flex items-center gap-1.5 text-xs px-2 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-sky-700 transition-colors" data-chart-name="pagamentoCanal" data-filters-available="true" title="Ver detalhes"><i class="fa-solid fa-expand fa-fw"></i><span>Detalhes</span></button>
+                            </div>
+                        </div>
+                        <div class="chart-container flex-grow"><canvas id="pagamentoCanalChart" role="img"></canvas></div>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="agelist-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center p-4 z-50 opacity-0">
+        <div class="modal-content modal-content-md bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95 relative">
+             <div class="loader hidden"></div>
+            <div class="modal-body">
+                <div class="flex justify-between items-center p-4 border-b">
+                    <h3 id="agelist-modal-title" class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-list-ul text-sky-600"></i>
+                        Contribuintes na Faixa Selecionada
+                    </h3>
+                    <button id="agelist-modal-close" class="text-slate-500 hover:text-red-600 text-3xl font-light">&times;</button>
+                </div>
+                <div id="agelist-modal-content" class="p-6 overflow-y-auto">
+                    <table class="w-full text-sm text-left text-slate-500">
+                        <thead class="text-xs text-slate-700 uppercase bg-slate-100 sticky top-0">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 rounded-l-lg">
+                                    <div class="table-header-icon"><i class="fa-solid fa-user-circle text-slate-500"></i>Contribuinte</div>
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-right">
+                                    <div class="table-header-icon justify-end"><i class="fa-solid fa-dollar-sign text-slate-500"></i>Valor (R$)</div>
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-center rounded-r-lg">
+                                    <div class="table-header-icon justify-center"><i class="fa-solid fa-file-invoice text-slate-500"></i>Ver DAM</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="agelist-modal-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="contributor-dams-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center p-4 z-50 opacity-0">
+        <div class="modal-content modal-content-lg bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] flex flex-col transform scale-95 relative">
+            <div class="loader hidden"></div>
+            <div class="modal-body">
+                <div class="flex justify-between items-center p-4 border-b">
+                     <h3 id="contributor-dams-modal-title" class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-file-invoice-dollar text-sky-600"></i>
+                        <span>DAMs do Contribuinte</span>
+                    </h3>
+                    <button id="contributor-dams-modal-close" class="text-slate-500 hover:text-red-600 text-3xl font-light">&times;</button>
+                </div>
+                <div id="contributor-dams-modal-content" class="p-6 overflow-y-auto">
+                    <p class="text-sm text-slate-600 mb-4">Detalhes dos débitos para: <strong id="contributor-name-in-modal" class="text-slate-800"></strong></p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-500">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100 sticky top-0">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 rounded-l-lg"><div class="table-header-icon"><i class="fa-solid fa-hashtag text-slate-500"></i>Nº do DAM</div></th>
+                                    <th scope="col" class="px-6 py-3"><div class="table-header-icon"><i class="fa-solid fa-tags text-slate-500"></i>Tributo</div></th>
+                                    <th scope="col" class="px-6 py-3 text-center"><div class="table-header-icon justify-center"><i class="fa-solid fa-file-contract text-slate-500"></i>Parcela</div></th>
+                                    <th scope="col" class="px-6 py-3 text-right"><div class="table-header-icon justify-end"><i class="fa-solid fa-gavel text-slate-500"></i>Multa</div></th>
+                                    <th scope="col" class="px-6 py-3 text-right"><div class="table-header-icon justify-end"><i class="fa-solid fa-arrow-trend-up text-slate-500"></i>Juros</div></th>
+                                    <th scope="col" class="px-6 py-3 text-right"><div class="table-header-icon justify-end"><i class="fa-solid fa-calculator text-slate-500"></i>Correção</div></th>
+                                    <th scope="col" class="px-6 py-3 text-right"><div class="table-header-icon justify-end"><i class="fa-solid fa-tag text-slate-500"></i>Desconto</div></th>
+                                    <th scope="col" class="px-6 py-3 text-right rounded-r-lg"><div class="table-header-icon justify-end"><i class="fa-solid fa-dollar-sign text-slate-500"></i>Valor Total</div></th>
+                                </tr>
+                            </thead>
+                            <tbody id="contributor-dams-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="chart-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center p-4 z-40 opacity-0">
+        <div class="modal-content modal-content-lg bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] flex flex-col transform scale-95 relative">
+            <div class="loader hidden"></div>
+            <div class="modal-body">
+                <div class="flex justify-between items-center p-4 border-b">
+                    <h3 id="chart-modal-title" class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <span>Detalhes do Gráfico</span>
+                    </h3>
+                    <button id="chart-modal-close" class="text-slate-500 hover:text-red-600 text-3xl font-light">&times;</button>
+                </div>
+                <div class="p-6 overflow-y-auto">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2">
+                            <div id="chart-modal-filter-section" class="flex flex-wrap items-center justify-between gap-4 mb-4 p-3 bg-slate-50 rounded-lg border hidden">
+                                 <div id="chart-modal-filters" class="flex items-center gap-1 rounded-lg bg-slate-200 p-1">
+                                    <button data-filter="all" class="filter-btn px-2 py-1 text-xs font-semibold rounded-md transition-colors filter-btn-active flex items-center gap-1"><i class="fa-solid fa-users"></i>Todos</button>
+                                    <button data-filter="pj" class="filter-btn px-2 py-1 text-xs font-semibold rounded-md transition-colors flex items-center gap-1"><i class="fa-solid fa-building"></i>PJ</button>
+                                    <button data-filter="pf" class="filter-btn px-2 py-1 text-xs font-semibold rounded-md transition-colors flex items-center gap-1"><i class="fa-solid fa-user"></i>PF</button>
+                                </div>
+                                 <button id="chart-modal-download-btn" class="px-3 py-2 bg-sky-600 text-white text-sm rounded-lg shadow-sm hover:bg-sky-700 transition flex items-center gap-2">
+                                    <i class="fa-solid fa-download"></i> Baixar PNG
+                                </button>
+                            </div>
+                            <div class="h-[50vh]"><canvas id="modal-chart-canvas"></canvas></div>
+                        </div>
+                        <div class="lg:col-span-1 bg-slate-50 p-4 rounded-lg border">
+                             <h4 class="font-semibold mb-2 text-slate-800 flex items-center gap-2"><i class="fa-solid fa-circle-info text-sky-600"></i> Sobre este Gráfico</h4>
+                             <p id="chart-modal-description" class="text-sm text-slate-600 space-y-2"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+body {
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    animation: fadeIn 0.8s ease-in-out;
+}
+.chart-container {
+    position: relative;
+    height: 40vh;
+    max-height: 400px;
+    width: 100%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.modal {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal-content {
+    transition: transform 0.3s ease;
+}
+
+.table-header-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+/* Select customizado com ícone */
+.custom-select-wrapper {
+    position: relative;
+}
+.custom-select-wrapper select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 2.5rem;
+}
+.custom-select-wrapper .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 0.75rem;
+    pointer-events: none;
+    color: #64748b;
+}
+
+/* Quebra de página PDF */
+.pdf-page-break {
+    page-break-before: always;
+}
+
+/* Loader animado */
+.loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0284c7;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -20px;
+    margin-left: -20px;
+    z-index: 60;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsividade - Mobile First */
+
+/* Até 767px */
+@media (max-width: 767px) {
+    main {
+        padding: 1rem;
+    }
+    header h1 {
+        font-size: 1.5rem;
+        gap: 0.5rem;
+    }
+    header p {
+        font-size: 0.875rem;
+    }
+    .custom-select-wrapper select {
+        padding-top: 0.6rem;
+        padding-bottom: 0.6rem;
+    }
+    section h2 {
+        font-size: 1.25rem;
+    }
+    article h3 {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    .chart-container {
+        height: 40vh;
+    }
+    .modal-content-lg, .modal-content-md {
+        width: calc(100% - 1.5rem);
+        margin: 1rem auto;
+        max-height: 95vh;
+    }
+    #kpi-row-1, #kpi-row-2, #kpi-container-arrecadacao {
+        gap: 0.75rem;
+    }
+    #kpi-row-1 > div,
+    #kpi-row-2 > div,
+    #kpi-container-arrecadacao > div {
+        padding: 0.75rem;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    #kpi-row-1 > div .flex-shrink-0,
+    #kpi-row-2 > div .flex-shrink-0,
+    #kpi-container-arrecadacao > div .flex-shrink-0 {
+         width: 2.25rem;
+         height: 2.25rem;
+         margin-bottom: 0.4rem;
+    }
+    #kpi-row-1 > div .flex-shrink-0 i,
+    #kpi-row-2 > div .flex-shrink-0 i,
+    #kpi-container-arrecadacao > div .flex-shrink-0 i {
+        font-size: 1.1rem;
+    }
+    #kpi-row-1 > div .text-2xl,
+    #kpi-row-2 > div .text-2xl,
+    #kpi-container-arrecadacao > div .text-2xl {
+        font-size: 1.2rem;
+        line-height: 1.2;
+    }
+    #kpi-row-1 > div .text-sm,
+    #kpi-row-2 > div .text-sm,
+    #kpi-container-arrecadacao > div .text-sm {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+    article table th, article table td, article table tfoot td {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+    .download-chart-btn, .open-chart-modal-btn {
+        padding: 3px 6px;
+        font-size: 0.7rem;
+    }
+    .download-chart-btn span, .open-chart-modal-btn span {
+        display: none;
+    }
+}
+
+/* A partir de 768px */
+@media (min-width: 768px) {
+    #kpi-row-1 > div,
+    #kpi-row-2 > div,
+    #kpi-container-arrecadacao > div {
+        padding: 1rem;
+        flex-direction: row;
+        align-items: center;
+        text-align: left;
+    }
+    #kpi-row-1 > div .flex-shrink-0,
+    #kpi-row-2 > div .flex-shrink-0,
+    #kpi-container-arrecadacao > div .flex-shrink-0 {
+         width: 3rem;
+         height: 3rem;
+         margin-right: 0.75rem;
+         margin-bottom: 0;
+    }
+    #kpi-row-1 > div .text-2xl,
+    #kpi-row-2 > div .text-2xl,
+    #kpi-container-arrecadacao > div .text-2xl {
+        font-size: 1.5rem;
+    }
+    #kpi-row-1 > div .text-sm,
+    #kpi-row-2 > div .text-sm,
+    #kpi-container-arrecadacao > div .text-sm {
+        font-size: 0.875rem;
+    }
+    .modal-content-lg { max-width: 60rem; }
+    .modal-content-md { max-width: 50rem; }
+}
+
+/* A partir de 1280px */
+@media (min-width: 1280px) {
+    .container {
+        max-width: 1380px;
+    }
+    .modal-content-lg {
+        max-width: 70rem;
+    }
+}
+
+/* Ajuste para notebooks/desktops médios (16-17") */
+@media (min-width: 1280px) and (max-width: 1750px) {
+    .container {
+        max-width: 1200px;
+    }
+    .modal-content-lg {
+        max-width: 60rem;
+    }
+    .chart-container {
+        max-width: 650px;
+        max-height: 400px;
+    }
+}
+
+/* A partir de 1536px */
+@media (min-width: 1536px) {
+    .container {
+        max-width: 1600px;
+    }
+    .modal-content-lg {
+        max-width: 85rem;
+    }
+    .chart-container {
+        max-height: 420px;
+    }
+}
