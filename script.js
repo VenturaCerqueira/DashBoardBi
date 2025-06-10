@@ -151,7 +151,37 @@ document.addEventListener('DOMContentLoaded', () => {
         { min: 500.01, max: 1000.00, label: 'R$ 500,01 a R$ 1.000,00' }, { min: 1000.01, max: 2000.00, label: 'R$ 1.000,01 a R$ 2.000,00' }, { min: 2000.01, max: 3000.00, label: 'R$ 2.000,01 a R$ 3.000,00' }, { min: 3000.01, max: Infinity, label: 'Acima de R$ 3.000,01' },
     ];
 
-    const createKpiCard = (kpi) => { let valueDisplay = kpi.isPercentage ? kpi.value.toFixed(2) + '%' : (kpi.isCurrency ? formatCurrency(kpi.value) : formatNumber(kpi.value)); const colors = { sky: 'text-sky-600', red: 'text-red-500', blue: 'text-blue-600', orange: 'text-orange-500', green: 'text-green-600', purple: 'text-purple-600', teal: 'text-teal-600', yellow: 'text-yellow-600', pink: 'text-pink-600' }; return `<div class="bg-white p-5 rounded-lg shadow-md border border-slate-200 flex items-center gap-5 transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 h-full"><div class="flex-shrink-0 w-14 h-14 flex items-center justify-center bg-${kpi.color}-100 rounded-full"><i class="fa-solid ${kpi.icon} ${colors[kpi.color]} text-2xl"></i></div><div><div class="text-2xl font-bold text-slate-900">${valueDisplay}</div><div class="text-sm font-medium text-slate-500">${kpi.label}</div></div></div>`;};
+    // ==================================================================
+    // FUNÇÃO ATUALIZADA PARA FUNCIONAR COM O NOVO CSS
+    // ==================================================================
+    const createKpiCard = (kpi) => {
+        let valueDisplay = kpi.isPercentage ? kpi.value.toFixed(2) + '%' : (kpi.isCurrency ? formatCurrency(kpi.value) : formatNumber(kpi.value));
+        const colors = {
+            sky: { bg: 'bg-sky-100', text: 'text-sky-600' },
+            red: { bg: 'bg-red-100', text: 'text-red-500' },
+            blue: { bg: 'bg-blue-100', text: 'text-blue-600' },
+            orange: { bg: 'bg-orange-100', text: 'text-orange-500' },
+            green: { bg: 'bg-green-100', text: 'text-green-600' },
+            purple: { bg: 'bg-purple-100', text: 'text-purple-600' },
+            teal: { bg: 'bg-teal-100', text: 'text-teal-600' },
+            yellow: { bg: 'bg-yellow-100', text: 'text-yellow-500' },
+            pink: { bg: 'bg-pink-100', text: 'text-pink-600' }
+        };
+        const colorClasses = colors[kpi.color] || colors.sky;
+
+        // A estrutura abaixo usa as classes .kpi-card, .kpi-value, etc., que são controladas pelo style.css
+        return `
+            <div class="kpi-card">
+                <div class="kpi-icon-wrapper ${colorClasses.bg}">
+                    <i class="fa-solid ${kpi.icon} ${colorClasses.text}"></i>
+                </div>
+                <div>
+                    <div class="kpi-value">${valueDisplay}</div>
+                    <div class="kpi-label">${kpi.label}</div>
+                </div>
+            </div>
+        `;
+    };
     
     const createTableRow = (item) => `<tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors duration-200 cursor-pointer contributor-row" data-contributor-name="${item.name}"><td class="px-6 py-4 font-medium text-slate-900"><div class="flex items-center gap-3"><i class="fa-solid fa-${item.type === 'building' ? 'building' : 'user'} text-slate-400"></i><span>${item.name}</span></div></td><td class="px-6 py-4 text-right font-mono">${formatCurrency(item.value)}</td></tr>`;
     
@@ -375,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const iconClass = iconElement ? iconElement.className : "fa-solid fa-chart-simple";
         
         document.getElementById('chart-modal-title').innerHTML = `<i class="${iconClass}"></i><span>${titleText}</span>`;
-        document.getElementById('chart-modal_description').innerHTML = chartDescriptions[chartName] || 'Descrição não disponível.';
+        document.getElementById('chart-modal-description').innerHTML = chartDescriptions[chartName] || 'Descrição não disponível.';
         
         if(modalChart) { modalChart.destroy(); }
 

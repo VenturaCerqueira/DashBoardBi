@@ -1,233 +1,267 @@
+/* === SISTEMA DE DESIGN RESPONSIVO COMPLETO === */
+
+/* --- FONTES E CONFIGURAÇÕES GLOBAIS --- */
 body {
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: #f8fafc;
+    color: #334155;
     animation: fadeIn 0.8s ease-in-out;
-}
-.chart-container {
-    position: relative;
-    height: 40vh;
-    max-height: 400px;
-    width: 100%;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+    line-height: 1.5;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+/* --- VARIÁVEIS DE DESIGN FLUIDO AVANÇADO --- */
+:root {
+    /* === TIPOGRAFIA FLUIDA (AJUSTADA PARA MELHOR REDUÇÃO) === */
+    --font-xs: clamp(0.625rem, 0.5rem + 0.625vw, 0.75rem);
+    --font-sm: clamp(0.75rem, 0.625rem + 0.625vw, 0.875rem);
+    --font-base: clamp(0.875rem, 0.75rem + 0.625vw, 1rem);
+    --font-lg: clamp(1rem, 0.875rem + 0.625vw, 1.125rem);
+    /* KPI Value Font: Reduz mais agressivamente em telas menores para evitar quebra */
+    --font-kpi-value: clamp(0.10rem, 100rem + 2.2vw, 0.8rem);
+    --font-2xl: clamp(1.25rem, 1rem + 1.25vw, 1.5rem);
+    --font-3xl: clamp(1.5rem, 1.125rem + 1.875vw, 1.875rem);
+
+    /* === ESPAÇAMENTO FLUIDO PROGRESSIVO === */
+    --space-xs: clamp(0.25rem, 0.125rem + 0.625vw, 0.5rem);
+    --space-sm: clamp(0.5rem, 0.25rem + 1.25vw, 0.75rem);
+    --space-md: clamp(0.75rem, 0.5rem + 1.25vw, 1rem);
+    --space-lg: clamp(1rem, 0.5rem + 2.5vw, 1.5rem);
+    --space-xl: clamp(1.5rem, 0.75rem + 3.75vw, 2rem);
+    --space-2xl: clamp(2rem, 1rem + 5vw, 3rem);
+
+    /* === DIMENSÕES DE COMPONENTES FLUIDAS === */
+    --kpi-icon-size: clamp(2.25rem, 1.8rem + 2.5vw, 3.5rem);
+    --kpi-icon-font: clamp(1rem, 0.8rem + 1.25vw, 1.5rem);
+    --chart-height: clamp(250px, 15rem + 10vw, 350px);
+    --modal-width: clamp(95%, 80vw, 1200px);
+    --modal-max-height: 90vh;
+
+    /* === GRID E CONTAINER RESPONSIVO === */
+    --grid-gap: clamp(1rem, 0.75rem + 1.25vw, 1.5rem);
+    --container-padding: clamp(1rem, 2vw + 0.5rem, 2rem);
+
+    /* === BORDER RADIUS ESCALÁVEL === */
+    --radius-md: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+    --radius-lg: clamp(0.75rem, 0.5rem + 0.625vw, 1rem);
+
+    /* === SHADOWS === */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
-.modal {
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+
+/* --- ANIMAÇÕES E TRANSIÇÕES --- */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(15px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* --- CONTAINER PRINCIPAL RESPONSIVO --- */
+main.container {
+    padding: var(--container-padding);
 }
-.modal-content {
+
+/* --- CABEÇALHO --- */
+header h1 { font-size: var(--font-3xl); font-weight: 700; }
+header p { font-size: var(--font-base); }
+
+/* --- BARRA DE INFORMAÇÕES E TÍTULOS DE SEÇÃO --- */
+#info-bar { padding: var(--space-md); border-radius: var(--radius-lg); gap: var(--grid-gap); }
+.text-2xl.font-semibold { font-size: var(--font-2xl); font-weight: 600; }
+
+
+/* --- SISTEMA DE GRID ADAPTATIVO E FLUIDO --- */
+#kpi-row-1, #kpi-row-2, #kpi-container-arrecadacao {
+    display: grid;
+    gap: var(--grid-gap);
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+#charts-grid {
+    display: grid;
+    gap: var(--grid-gap);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* ==================================================================
+== AJUSTE: CABEÇALHO DO GRÁFICO (TÍTULO ACIMA DOS BOTÕES) ==
+==================================================================
+*/
+#charts-grid article > .flex.justify-between {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+}
+
+#charts-grid article > .flex.justify-between > .flex.items-center {
+    width: 100%;
+    justify-content: flex-start;
+}
+
+
+/* --- CARDS KPI TOTALMENTE RESPONSIVOS --- */
+.kpi-card {
+    background: white;
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid #e2e8f0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    animation: slideUp 0.6s ease-out forwards;
+    opacity: 0;
+    animation-delay: calc(var(--i, 0) * 50ms);
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #0ea5e9, #06b6d4, #34d399);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.kpi-card:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-5px);
+}
+
+.kpi-card:hover::before { transform: scaleX(1); }
+
+.kpi-card .kpi-icon-wrapper {
+    flex-shrink: 0;
+    width: var(--kpi-icon-size);
+    height: var(--kpi-icon-size);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: transform 0.3s ease;
 }
 
-.table-header-icon {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    white-space: nowrap;
+.kpi-card .kpi-icon-wrapper i { font-size: var(--kpi-icon-font); }
+.kpi-card:hover .kpi-icon-wrapper { transform: scale(1.1); }
+
+/* ==================================================================
+== AJUSTE: TAMANHO DO TEXTO DO KPI PARA EVITAR QUEBRA ==
+==================================================================
+*/
+.kpi-card .kpi-value {
+    font-size: var(--font-kpi-value); /* Usa a nova variável fluida */
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.1; /* Reduz a altura da linha para economizar espaço */
+    margin-bottom: var(--space-xs);
+    word-break: break-all;
+    white-space: nowrap; /* Impede a quebra de linha do número */
 }
 
-/* Select customizado com ícone */
-.custom-select-wrapper {
-    position: relative;
+.kpi-card .kpi-label {
+    font-size: var(--font-sm);
+    font-weight: 500;
+    color: #64748b;
 }
+
+/* --- GRÁFICOS E TABELAS RESPONSIVOS --- */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: var(--chart-height);
+    min-height: 250px;
+}
+
+.overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* --- SELECT CUSTOMIZADO --- */
+.custom-select-wrapper { position: relative; }
 .custom-select-wrapper select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     padding-right: 2.5rem;
+    font-size: var(--font-base);
+    border-radius: var(--radius-md);
 }
 .custom-select-wrapper .icon {
     position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    padding: 0 0.75rem;
-    pointer-events: none;
-    color: #64748b;
-}
-
-/* Quebra de página PDF */
-.pdf-page-break {
-    page-break-before: always;
-}
-
-/* Loader animado */
-.loader {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #0284c7;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    position: absolute;
+    right: var(--space-md);
     top: 50%;
-    left: 50%;
-    margin-top: -20px;
-    margin-left: -20px;
-    z-index: 60;
+    transform: translateY(-50%);
+    pointer-events: none;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+/* --- MODAIS RESPONSIVOS --- */
+.modal {
+    transition: opacity 0.3s ease-in-out;
+    padding: var(--space-md);
 }
 
-/* Responsividade - Mobile First */
+.modal-content {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    animation: scaleIn 0.3s ease-out forwards;
+    width: var(--modal-width);
+    max-height: var(--modal-max-height);
+}
 
-/* Até 767px */
-@media (max-width: 767px) {
-    main {
-        padding: 1rem;
+/* --- MEDIA QUERIES PARA AJUSTES FINOS --- */
+@media (min-width: 1400px) {
+     main.container {
+        max-width: 1536px;
+        margin-left: auto;
+        margin-right: auto;
     }
-    header h1 {
-        font-size: 1.5rem;
-        gap: 0.5rem;
-    }
-    header p {
-        font-size: 0.875rem;
-    }
-    .custom-select-wrapper select {
-        padding-top: 0.6rem;
-        padding-bottom: 0.6rem;
-    }
-    section h2 {
-        font-size: 1.25rem;
-    }
-    article h3 {
-        font-size: 1rem;
-        margin-bottom: 0.75rem;
-    }
-    .chart-container {
-        height: 40vh;
-    }
-    .modal-content-lg, .modal-content-md {
-        width: calc(100% - 1.5rem);
-        margin: 1rem auto;
-        max-height: 95vh;
-    }
-    #kpi-row-1, #kpi-row-2, #kpi-container-arrecadacao {
-        gap: 0.75rem;
-    }
-    #kpi-row-1 > div,
-    #kpi-row-2 > div,
-    #kpi-container-arrecadacao > div {
-        padding: 0.75rem;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-    #kpi-row-1 > div .flex-shrink-0,
-    #kpi-row-2 > div .flex-shrink-0,
-    #kpi-container-arrecadacao > div .flex-shrink-0 {
-         width: 2.25rem;
-         height: 2.25rem;
-         margin-bottom: 0.4rem;
-    }
-    #kpi-row-1 > div .flex-shrink-0 i,
-    #kpi-row-2 > div .flex-shrink-0 i,
-    #kpi-container-arrecadacao > div .flex-shrink-0 i {
-        font-size: 1.1rem;
-    }
-    #kpi-row-1 > div .text-2xl,
-    #kpi-row-2 > div .text-2xl,
-    #kpi-container-arrecadacao > div .text-2xl {
-        font-size: 1.2rem;
-        line-height: 1.2;
-    }
-    #kpi-row-1 > div .text-sm,
-    #kpi-row-2 > div .text-sm,
-    #kpi-container-arrecadacao > div .text-sm {
-        font-size: 0.75rem;
-        line-height: 1.2;
-    }
-    article table th, article table td, article table tfoot td {
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
-        padding-top: 0.75rem;
-        padding-bottom: 0.75rem;
-    }
-    .download-chart-btn, .open-chart-modal-btn {
-        padding: 3px 6px;
-        font-size: 0.7rem;
-    }
-    .download-chart-btn span, .open-chart-modal-btn span {
-        display: none;
+}
+/* GRÁFICOS E TABELAS RESPONSIVOS */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: var(--chart-height);
+    min-height: 250px;
+}
+/* --- AJUSTES DE ACESSIBILIDADE E USABILIDADE --- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }
 
-/* A partir de 768px */
-@media (min-width: 768px) {
-    #kpi-row-1 > div,
-    #kpi-row-2 > div,
-    #kpi-container-arrecadacao > div {
-        padding: 1rem;
-        flex-direction: row;
-        align-items: center;
-        text-align: left;
+@media (hover: none) and (pointer: coarse) {
+    .kpi-card:hover {
+        transform: none;
+        box-shadow: var(--shadow-md);
     }
-    #kpi-row-1 > div .flex-shrink-0,
-    #kpi-row-2 > div .flex-shrink-0,
-    #kpi-container-arrecadacao > div .flex-shrink-0 {
-         width: 3rem;
-         height: 3rem;
-         margin-right: 0.75rem;
-         margin-bottom: 0;
-    }
-    #kpi-row-1 > div .text-2xl,
-    #kpi-row-2 > div .text-2xl,
-    #kpi-container-arrecadacao > div .text-2xl {
-        font-size: 1.5rem;
-    }
-    #kpi-row-1 > div .text-sm,
-    #kpi-row-2 > div .text-sm,
-    #kpi-container-arrecadacao > div .text-sm {
-        font-size: 0.875rem;
-    }
-    .modal-content-lg { max-width: 60rem; }
-    .modal-content-md { max-width: 50rem; }
+    .kpi-card:hover::before { transform: scaleX(0); }
 }
 
-/* A partir de 1280px */
-@media (min-width: 1280px) {
-    .container {
-        max-width: 1380px;
+@media print {
+    body { background-color: #fff; color: #000; }
+    header, .modal, button, .custom-select-wrapper { display: none !important; }
+    main.container { padding: 0; max-width: 100%; }
+    .kpi-card, article {
+        box-shadow: none !important;
+        border: 1px solid #ccc;
+        page-break-inside: avoid;
     }
-    .modal-content-lg {
-        max-width: 70rem;
-    }
-}
-
-/* Ajuste para notebooks/desktops médios (16-17") */
-@media (min-width: 1280px) and (max-width: 1750px) {
-    .container {
-        max-width: 1200px;
-    }
-    .modal-content-lg {
-        max-width: 60rem;
-    }
-    .chart-container {
-        max-width: 650px;
-        max-height: 400px;
-    }
-}
-
-/* A partir de 1536px */
-@media (min-width: 1536px) {
-    .container {
-        max-width: 1600px;
-    }
-    .modal-content-lg {
-        max-width: 85rem;
-    }
-    .chart-container {
-        max-height: 420px;
-    }
+    .pdf-page-break { page-break-before: always; }
+    .chart-container { height: 200px !important; }
+    h1, h2, h3, p { color: #000 !important; }
 }
