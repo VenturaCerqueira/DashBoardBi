@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
     const formatNumber = (value) => new Intl.NumberFormat('pt-BR').format(value);
 
-    // --- MOCK DATA (unchanged from previous version) ---
     const mockData = {
         cc1: {
             info: { tributos: 'IPTU, ISS, TFF', emissao: '01/06/2025', vencimento: '30/06/2025' },
@@ -50,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     { name: '33.444.555/0001-00 - PEQUENO MERCADO MEI', value: 58.40, type: 'building', dams: [{ id: '2025022', tipo: 'TFF', parcela: 'Única', multa: 5.84, juros: 0.00, correcao: 0, desconto: 0, valor: 58.40 }] },
                     { name: '55.666.777-88 - MICROEMPRESA DO BAIRRO', value: 51.17, type: 'user', dams: [{ id: '2025023', tipo: 'TFF', parcela: 'Única', multa: 5.11, juros: 0.06, correcao: 0, desconto: 0, valor: 51.17 }] },
                 ],
-                fullList: [ /* Full list remains as before for brevity */ ]
+                fullList: [  ]
             },
             charts: {
                 line: { labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'], data: [55000, 78000, 95000, 120000, 180000, 250000] },
@@ -106,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     { name: '04.040.404/0001-04 - OFICINA MECÂNICA', value: 65.00, type: 'building', dams: [{id: 'TFF020', tipo: 'TFF', parcela: '1/1', multa: 6, juros: 0, correcao: 0, desconto: 0, value: 65.00}] }, 
                     { name: '05.050.505-05 - MERCADINHO FAMÍLIA', value: 55.20, type: 'user', dams: [{id: 'TFF021', tipo: 'TFF', parcela: '1/1', multa: 5, juros: 0, correcao: 0, desconto: 0, value: 55.20}] },
                 ],
-                fullList: [ /* Full list remains as before for brevity */ ]
+                fullList: [ ]
             },
              charts: {
                 line: { labels: ['Dez', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai'], data: [300000, 450000, 600000, 800000, 1100000, 1500000] },
@@ -151,9 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { min: 500.01, max: 1000.00, label: 'R$ 500,01 a R$ 1.000,00' }, { min: 1000.01, max: 2000.00, label: 'R$ 1.000,01 a R$ 2.000,00' }, { min: 2000.01, max: 3000.00, label: 'R$ 2.000,01 a R$ 3.000,00' }, { min: 3000.01, max: Infinity, label: 'Acima de R$ 3.000,01' },
     ];
 
-    // ==================================================================
-    // FUNÇÃO ATUALIZADA PARA FUNCIONAR COM O NOVO CSS
-    // ==================================================================
+
     const createKpiCard = (kpi) => {
         let valueDisplay = kpi.isPercentage ? kpi.value.toFixed(2) + '%' : (kpi.isCurrency ? formatCurrency(kpi.value) : formatNumber(kpi.value));
         const colors = {
@@ -169,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         const colorClasses = colors[kpi.color] || colors.sky;
 
-        // A estrutura abaixo usa as classes .kpi-card, .kpi-value, etc., que são controladas pelo style.css
+        
         return `
             <div class="kpi-card">
                 <div class="kpi-icon-wrapper ${colorClasses.bg}">
@@ -274,12 +271,10 @@ document.addEventListener('DOMContentLoaded', () => {
         Object.values(charts).forEach(chart => chart.update());
     };
     
-    // --- EVENT LISTENERS ---
     document.getElementById('carta-cobranca-select').addEventListener('change', (e) => { currentDataKey = e.target.value; updateDashboard(mockData[currentDataKey]); });
     
     document.getElementById('agelist-table-body').addEventListener('click', (e) => { const row = e.target.closest('tr'); if (row && row.dataset.rangeIndex) { openAgelistModal(parseInt(row.dataset.rangeIndex)); } });
     
-    // --- MODAL HANDLING ---
     const agelistModal = document.getElementById('agelist-modal');
     const chartModal = document.getElementById('chart-modal');
     const contributorDamsModal = document.getElementById('contributor-dams-modal');
@@ -296,14 +291,14 @@ document.addEventListener('DOMContentLoaded', () => {
             modalBody.classList.add('invisible');
         }
 
-        setTimeout(() => { // Show modal content
+        setTimeout(() => { 
             if (loader && modalBody) {
                 loader.classList.add('hidden');
                 modalBody.classList.remove('invisible');
             }
             modal.classList.remove('opacity-0');
             modal.querySelector('.modal-content').classList.remove('scale-95');
-        }, 400); // Simulate loading time
+        }, 400); 
     };
 
     const closeModal = (modal) => {
@@ -447,7 +442,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- INITIALIZE ---
     initCharts();
     updateDashboard(mockData[currentDataKey]);
 });
